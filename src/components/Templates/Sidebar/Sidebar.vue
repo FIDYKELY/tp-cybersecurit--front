@@ -152,150 +152,26 @@
               </a>
             </router-link>
           </li>
-
-          <li class="items-center" v-if="userHasPermission('perm-publicationListe')">
-            <router-link
-              to="/admin/publication"
+          <li class="items-center" v-if="userHasPermission('perm-products')">
+            <router-link 
+              to="/admin/products" 
               v-slot="{ href, navigate, isActive }"
             >
-              <a
+              <a 
                 :href="href"
                 @click="navigate"
                 class="text-xs uppercase py-3 font-bold block"
                 :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
+                  isActive ? 'text-emerald-500 hover:text-emerald-600' : 'text-blueGray-700 hover:text-blueGray-500',
                 ]"
               >
-                <i
-                  class="fas fa-table mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Publications Liste
-              </a>
-            </router-link>
-          </li>
-          
-          <li class="items-center" v-if="userHasPermission('perm-analyseDemographique')">
-            <router-link
-              to="/admin/analyseDemographique"
-              v-slot="{ href, navigate, isActive }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                class="text-xs uppercase py-3 font-bold block"
-                :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                ]"
-              >
-                <i
-                  class="fas fa-table mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Analyse Demographique
+                <i class="fas fa-box mr-2 text-sm" :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"></i>
+                Gestion des Produits
               </a>
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userHasPermission('perm-moderationPublication')">
-            <router-link
-              to="/admin/moderation"
-              v-slot="{ href, navigate, isActive }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                class="text-xs uppercase py-3 font-bold block"
-                :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                ]"
-              >
-                <i
-                  class="fas fa-table mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Moderations des publications
-              </a>
-            </router-link>
-          </li>
 
-          <li class="items-center" v-if="userHasPermission('perm-publicationRecentes')">
-            <router-link
-              to="/admin/recent"
-              v-slot="{ href, navigate, isActive }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                class="text-xs uppercase py-3 font-bold block"
-                :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                ]"
-              >
-                <i
-                  class="fas fa-table mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Publications Recentes
-              </a>
-            </router-link>
-          </li>
-
-          <li class="items-center" v-if="userHasPermission('perm-votes')">
-            <router-link
-              to="/admin/vote/polls"
-              v-slot="{ href, navigate, isActive }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                class="text-xs uppercase py-3 font-bold block"
-                :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                ]"
-              >
-                <i
-                  class="fas fa-poll mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Votes
-              </a>
-            </router-link>
-          </li>
-
-          <li class="items-center" v-if="userHasPermission('perm-sondages')">
-            <router-link
-              to="/admin/sondage/surveys"
-              v-slot="{ href, navigate, isActive }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                class="text-xs uppercase py-3 font-bold block"
-                :class="[
-                  isActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                ]"
-              >
-                <i
-                  class="fas fa-share mr-2 text-sm"
-                  :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
-                Sondages
-              </a>
-            </router-link>
-          </li>
 
         </ul>
 
@@ -320,46 +196,13 @@
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userHasPermission('perm-publicationStat')">
-            <router-link
-              class="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-              to="/admin/statPub"
-            >
-              <i
-                class="fas fa-poll text-blueGray-300 mr-2 text-sm"
-              ></i>
-              Publications
-            </router-link>
-          </li>
-
-          <li class="items-center" v-if="userHasPermission('perm-voteStat')">
-            <router-link
-              class="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-              to="/admin/statPoll"
-            >
-              <i
-                class="fas fa-poll text-blueGray-300 mr-2 text-sm"
-              ></i>
-              Vote
-            </router-link>
-          </li>
-
-          <li class="items-center" v-if="userHasPermission('perm-sondageStat')">
-            <router-link
-              class="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-              to="/admin/statSurvey"
-            >
-              <i
-                class="fas fa-poll text-blueGray-300 mr-2 text-sm"
-              ></i>
-              Sondage
-            </router-link>
-          </li>
+         
         </ul>
       </div>
     </div>
   </nav>
 </template>
+
 
 
 <script>

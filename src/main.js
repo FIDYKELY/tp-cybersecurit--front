@@ -23,6 +23,7 @@ import Dashboard from "@/views/admin/Dashboard.vue";
 import Settings from "@/views/admin/Settings.vue";
 import CardUnauthorized from "@/components/Templates/Cards/CardUnauthorized.vue";
 import Tables from "@/views/admin/Tables.vue";
+import ProductManagement from '@/components/Templates/ProductManagement.vue';
 import Polls from "@/views/admin/vote/Polls.vue";
 import Users from "@/views/admin/utilisateurs/Users.vue";
 import Admins from "@/views/admin/utilisateurs/Admins.vue";
@@ -110,6 +111,13 @@ const routes = [
         name: 'Liste',
         component: Users,
         meta: { permission: 'perm-users' },
+
+      },
+      {
+        path: "/admin/products",
+        name: 'ProductManagement',
+        component: ProductManagement,
+        meta: { permission: 'perm-products' },
 
       },
       {
