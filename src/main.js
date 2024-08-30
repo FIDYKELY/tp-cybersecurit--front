@@ -24,6 +24,7 @@ import Settings from "@/views/admin/Settings.vue";
 import CardUnauthorized from "@/components/Templates/Cards/CardUnauthorized.vue";
 import Tables from "@/views/admin/Tables.vue";
 import ProductManagement from '@/components/Templates/ProductManagement.vue';
+import ProductModal from '@/components/Templates/ProductModal.vue';
 import Polls from "@/views/admin/vote/Polls.vue";
 import Users from "@/views/admin/utilisateurs/Users.vue";
 import Admins from "@/views/admin/utilisateurs/Admins.vue";
@@ -119,6 +120,19 @@ const routes = [
         component: ProductManagement,
         meta: { permission: 'perm-products' },
 
+      },
+      {
+        path: '/admin/products/add',
+        name: 'AddProduct',
+        component: ProductModal,
+        meta: { permission: 'perm-productModalAdd' },
+      },
+      {
+        path: '/admin/products/edit/:id',
+        name: 'EditProduct',
+        component: ProductModal,
+        meta: { permission: 'perm-productModalEdit' },
+        props: true,
       },
       {
         path: "/admin/vote/polls",

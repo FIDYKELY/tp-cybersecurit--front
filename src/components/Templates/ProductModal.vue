@@ -1,104 +1,177 @@
 <template>
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <div class="flex items-center justify-between mb-6">
-          <button @click="$emit('close')" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-            Annuler
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="relative bg-white rounded-lg shadow-lg w-full max-w-lg">
+      <div class="p-6">
+        <h3 class="text-lg font-bold">{{ localProduct.id ? 'Modifier' : 'Ajouter' }} un Produit</h3>
+        <form @submit.prevent="submitForm">
+          <label class="text-blueGray-700 font-bold mb-2">Nom</label>
+          <input
+            v-model="localProduct.product_name"
+            type="text"
+            placeholder="Nom du produit"
+            class="form-input"
+          />
+          <label class="text-blueGray-700 font-bold mb-2">Description</label>
+          <textarea
+            v-model="localProduct.description"
+            placeholder="Description du produit"
+            class="form-textarea"
+          ></textarea>
+          <label class="text-blueGray-700 font-bold mb-2">Prix</label>
+          <input
+            v-model.number="localProduct.price"
+            type="number"
+            step="0.01"
+            placeholder="Prix du produit"
+            class="form-input"
+          />
+          <label class="text-blueGray-700 font-bold mb-2">Quantité</label>
+          <input
+            v-model.number="localProduct.quantity"
+            type="number"
+            placeholder="Quantité en stock"
+            class="form-input"
+          />
+          <label class="text-blueGray-700 font-bold mb-2">Catégorie</label>
+          <select
+            v-model="localProduct.category_id"
+            class="form-select"
+          >
+            <option value="">Sélectionner une catégorie</option>
+            <option v-for="category in localCategories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+          <label class="text-blueGray-700 font-bold mb-2">Image</label>
+          <input
+            type="file"
+            @change="handleFileUpload"
+            class="form-input"
+          />
+          <button type="submit" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-4">
+            {{ localProduct.id ? 'Modifier' : 'Ajouter' }}
           </button>
-          <h2 class="text-blueGray-700 text-xl font-bold text-center flex-1">{{ product ? 'Modifier' : 'Ajouter' }} un Produit</h2>
-        </div>
-        <form @submit.prevent="submit">
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="product_name">
-              Nom du produit
-            </label>
-            <input v-model="form.product_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="product_name" type="text" placeholder="Nom du produit" required>
-          </div>
-  
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
-              Description
-            </label>
-            <textarea v-model="form.description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" placeholder="Description du produit"></textarea>
-          </div>
-  
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="price">
-              Prix
-            </label>
-            <input v-model="form.price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="price" type="number" step="0.01" placeholder="Prix" required>
-          </div>
-  
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="category_id">
-              Catégorie
-            </label>
-            <select v-model="form.category_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="category_id" required>
-              <option value="" disabled>Sélectionnez une catégorie</option>
-              <option value="1">Catégorie 1</option>
-              <option value="2">Catégorie 2</option>
-              <option value="3">Catégorie 3</option>
-            </select>
-          </div>
-  
-          <div class="flex justify-end space-x-2 mt-4">
-            <button type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" @click="$emit('close')">
-              Annuler
-            </button>
-            <button type="submit" class="bg-blueGray-700 hover:bg-blueGray-800 text-white font-bold py-2 px-4 rounded">
-              Enregistrer
-            </button>
-          </div>
         </form>
       </div>
+      <button @click="$emit('close')" class="absolute top-2 right-2 text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-  </template>
-  
-  
-  <script>
-  export default {
-    props: {
-      product: {
-        type: Object,
-        default: null,
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  props: {
+    product: {
+      type: Object,
+      default: () => ({}),
+    },
+    categories: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      localProduct: { ...this.product },
+      localCategories: [], // Utiliser une propriété locale pour les catégories
+      selectedFile: null,
+    };
+  },
+  watch: {
+    product: {
+      handler(newValue) {
+        this.localProduct = { ...newValue };
+      },
+      deep: true,
+    },
+    categories: {
+      handler(newValue) {
+        this.localCategories = [...newValue];
+      },
+      immediate: true,
+    },
+  },
+  async mounted() {
+    this.fetchCategories(); // Assurez-vous de récupérer les catégories lors du montage
+  },
+  methods: {
+    async fetchCategories() {
+      try {
+        const response = await axios.get('/api/categories');
+        this.localCategories = response.data;
+        console.log('Categories:', this.localCategories); // Assurez-vous que les catégories sont récupérées
+      } catch (error) {
+        console.error("Erreur lors de la récupération des catégories:", error);
       }
     },
-    data() {
-      return {
-        form: {
-          product_name: '',
-          description: '',
-          price: null,
-          category_id: '',
-        }
-      };
-    },
-    watch: {
-      product: {
-        immediate: true,
-        handler(newProduct) {
-          if (newProduct) {
-            this.form = { ...newProduct };
-          } else {
-            this.form = {
-              product_name: '',
-              description: '',
-              price: null,
-              category_id: '',
-            };
-          }
-        }
-      }
-    },
-    methods: {
-      submit() {
-        if (this.form.product_name && this.form.price && this.form.category_id) {
-          this.$emit('save', { ...this.form });
-        } else {
-          alert("Veuillez remplir tous les champs obligatoires.");
-        }
-      }
+    handleFileUpload(event) {
+  this.selectedFile = event.target.files[0];
+},
+    async submitForm() {
+  try {
+    // Vérifiez les champs requis
+    if (!this.localProduct.product_name) {
+      throw new Error("Le nom du produit est requis");
     }
-  };
-  </script>
-  
+    if (!this.localProduct.price || isNaN(this.localProduct.price)) {
+      throw new Error("Le prix doit être un nombre");
+    }
+    if (this.localProduct.quantity < 0) {
+      throw new Error("La quantité doit être un entier positif");
+    }
+
+    const formData = new FormData();
+    formData.append('product_name', this.localProduct.product_name);
+    formData.append('description', this.localProduct.description || '');
+    formData.append('price', this.localProduct.price);
+    formData.append('quantity', this.localProduct.quantity);
+    formData.append('category_id', this.localProduct.category_id || null);
+    if (this.selectedFile) {
+  formData.append('image', this.selectedFile);
+}
+console.log('FormData:', [...formData.entries()]);
+
+    const url = this.localProduct.id 
+      ? `/api/products/${this.localProduct.id}` 
+      : '/api/products';
+    const method = this.localProduct.id ? 'put' : 'post';
+
+    const response = await axios({ method, url, data: formData });
+    console.log('Produit enregistré avec succès:', response.data);
+    this.$emit('save');
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement du produit:", error.message);
+    console.error("Réponse de l'API:", error.response?.data);
+  }
+}
+,
+  },
+};
+</script>
+
+<style scoped>
+.form-input {
+  border: 1px solid #d3d3d3;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.form-textarea {
+  border: 1px solid #d3d3d3;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.form-select {
+  border: 1px solid #d3d3d3;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+</style>
