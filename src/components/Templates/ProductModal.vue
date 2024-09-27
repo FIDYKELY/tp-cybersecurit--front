@@ -1,63 +1,86 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center">
-    <div class="relative bg-white rounded-lg shadow-lg w-full max-w-lg">
-      <div class="p-6">
-        <h3 class="text-lg font-bold">{{ localProduct.id ? 'Modifier' : 'Ajouter' }} un Produit</h3>
-        <form @submit.prevent="submitForm">
-          <label class="text-blueGray-700 font-bold mb-2">Nom</label>
-          <input
-            v-model="localProduct.product_name"
-            type="text"
-            placeholder="Nom du produit"
-            class="form-input"
-          />
-          <label class="text-blueGray-700 font-bold mb-2">Description</label>
-          <textarea
-            v-model="localProduct.description"
-            placeholder="Description du produit"
-            class="form-textarea"
-          ></textarea>
-          <label class="text-blueGray-700 font-bold mb-2">Prix</label>
-          <input
-            v-model.number="localProduct.price"
-            type="number"
-            step="0.01"
-            placeholder="Prix du produit"
-            class="form-input"
-          />
-          <label class="text-blueGray-700 font-bold mb-2">Quantité</label>
-          <input
-            v-model.number="localProduct.quantity"
-            type="number"
-            placeholder="Quantité en stock"
-            class="form-input"
-          />
-          <label class="text-blueGray-700 font-bold mb-2">Catégorie</label>
-          <select
-            v-model="localProduct.category_id"
-            class="form-select"
-          >
-            <option value="">Sélectionner une catégorie</option>
-            <option v-for="category in localCategories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-          <label class="text-blueGray-700 font-bold mb-2">Image</label>
-          <input
-            type="file"
-            @change="handleFileUpload"
-            class="form-input"
-          />
-          <button type="submit" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-4">
-            {{ localProduct.id ? 'Modifier' : 'Ajouter' }}
-          </button>
-        </form>
+  <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+    <div class="rounded-t bg-white mb-0 px-6 py-6">
+      <div class="text-center flex justify-between">
+        <h6 class="text-blueGray-700 text-xl font-bold">{{ localProduct.id ? 'Modifier' : 'Ajouter' }} un Produit</h6>
       </div>
-      <button @click="$emit('close')" class="absolute top-2 right-2 text-gray-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+    </div>
+    <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
+      <form @submit.prevent="submitForm">
+        <div class="flex flex-wrap">
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Nom</label>
+            <input
+              v-model="localProduct.product_name"
+              type="text"
+              placeholder="Nom du produit"
+              class="form-input"
+            />
+          </div>
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Description</label>
+            <textarea
+              v-model="localProduct.description"
+              placeholder="Description du produit"
+              class="form-textarea"
+            ></textarea>
+          </div>
+        </div>
+        <div class="flex flex-wrap">
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Prix</label>
+            <input
+              v-model.number="localProduct.price"
+              type="number"
+              step="0.01"
+              placeholder="Prix du produit"
+              class="form-input"
+            />
+          </div>
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Quantité</label>
+            <input
+              v-model.number="localProduct.quantity"
+              type="number"
+              placeholder="Quantité en stock"
+              class="form-input"
+            />
+          </div>
+        </div>
+        <div class="flex flex-wrap">
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Catégorie</label>
+            <select
+              v-model="localProduct.category_id"
+              class="form-select"
+            >
+              <option value="">Sélectionner une catégorie</option>
+              <option v-for="category in localCategories" :key="category.id" :value="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+            <button @click="addCategory" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-2">
+              Ajouter une catégorie
+            </button>
+            <button @click="deleteCategory" class="bg-red-700 text-white px-4 py-2 rounded mt-2">
+              Supprimer la catégorie
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-wrap">
+          <div class="w-full lg:w-6/12 px-4">
+            <label class="text-blueGray-700 font-bold mb-2">Image</label>
+            <input
+              type="file"
+              @change="handleFileUpload"
+              class="form-input"
+            />
+          </div>
+        </div>
+        <button type="submit" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-4">
+          {{ localProduct.id ? 'Modifier' : 'Ajouter' }}
+        </button>
+      </form>
     </div>
   </div>
 </template>
@@ -110,6 +133,34 @@ export default {
         console.error("Erreur lors de la récupération des catégories:", error);
       }
     },
+    async addCategory() {
+    // Open a prompt to enter the new category name
+    const categoryName = prompt('Enter the new category name:');
+    if (categoryName) {
+      try {
+        const response = await axios.post('/api/categories', { name: categoryName });
+        this.localCategories.push(response.data);
+        console.log('Category created successfully:', response.data);
+      } catch (error) {
+        console.error('Error creating category:', error);
+      }
+    }
+  },
+  async deleteCategory() {
+    if (this.localProduct.category_id) {
+      const categoryName = this.localCategories.find(category => category.id === this.localProduct.category_id).name;
+      const confirmDelete = confirm(`Voulez-vous vraiment supprimer la catégorie "${categoryName}" ?`);
+      if (confirmDelete) {
+        try {
+          const response = await axios.delete(`/api/categories/${this.localProduct.category_id}`);
+          this.localCategories = this.localCategories.filter(category => category.id !== this.localProduct.category_id);
+          console.log('Category deleted successfully:', response.data);
+        } catch (error) {
+          console.error('Error deleting category:', error);
+        }
+      }
+    }
+  },
     handleFileUpload(event) {
   this.selectedFile = event.target.files[0];
 },
@@ -149,8 +200,7 @@ console.log('FormData:', [...formData.entries()]);
     console.error("Erreur lors de l'enregistrement du produit:", error.message);
     console.error("Réponse de l'API:", error.response?.data);
   }
-}
-,
+},
   },
 };
 </script>
