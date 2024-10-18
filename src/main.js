@@ -24,6 +24,10 @@ import Settings from "@/views/admin/Settings.vue";
 import CardUnauthorized from "@/components/Templates/Cards/CardUnauthorized.vue";
 import Tables from "@/views/admin/Tables.vue";
 import ProductManagement from '@/components/Templates/ProductManagement.vue';
+import DriverList from '@/components/Templates/DriverList.vue';
+import DriverModal from '@/components/Templates/DriverModal.vue';
+
+
 import ProductModal from '@/components/Templates/ProductModal.vue';
 import EditProduct from '@/components/Templates/EditProductModal.vue';
 
@@ -121,6 +125,27 @@ const routes = [
         name: 'ProductManagement',
         component: ProductManagement,
         meta: { permission: 'perm-products' },
+
+      },
+      {
+        path: "/admin/driver",
+        name: 'DriverList',
+        component: DriverList,
+        meta: { permission: 'perm-driver' },
+
+      },
+      {
+        path: "/admin/EditDriver/edit/:id",
+        name: 'EditDriver',
+        component: DriverModal,
+        meta: { permission: 'perm-driver' },
+
+      },
+      {
+        path: "/admin/EditDriver/add",
+        name: 'AddDriver',
+        component: DriverModal,
+        meta: { permission: 'perm-driver' },
 
       },
       {

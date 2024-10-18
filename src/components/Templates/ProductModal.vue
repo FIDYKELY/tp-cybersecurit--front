@@ -1,85 +1,45 @@
 <template>
   <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
     <div class="rounded-t bg-white mb-0 px-6 py-6">
-      <div class="text-center flex justify-between">
-        <h6 class="text-blueGray-700 text-xl font-bold">{{ localProduct.id ? 'Modifier' : 'Ajouter' }} un Produit</h6>
+      <div class="text-center">
+        <h6 class="text-blueGray-700 text-xl font-bold">Modifier le Produit</h6>
       </div>
     </div>
     <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
-      <form @submit.prevent="submitForm">
-        <div class="flex flex-wrap">
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Nom</label>
-            <input
-              v-model="localProduct.product_name"
-              type="text"
-              placeholder="Nom du produit"
-              class="form-input"
-            />
-          </div>
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Description</label>
-            <textarea
-              v-model="localProduct.description"
-              placeholder="Description du produit"
-              class="form-textarea"
-            ></textarea>
-          </div>
+      <form @submit.prevent="updateProduct" class="space-y-4">
+        <div>
+          <label class="font-bold text-blueGray-700">Nom du produit:</label>
+          <input v-model="product.product_name" placeholder="Nom du produit" class="border rounded w-full p-2" required />
         </div>
-        <div class="flex flex-wrap">
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Prix</label>
-            <input
-              v-model.number="localProduct.price"
-              type="number"
-              step="0.01"
-              placeholder="Prix du produit"
-              class="form-input"
-            />
-          </div>
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Quantité</label>
-            <input
-              v-model.number="localProduct.quantity"
-              type="number"
-              placeholder="Quantité en stock"
-              class="form-input"
-            />
-          </div>
+        <div>
+          <label class="font-bold text-blueGray-700">Description du produit:</label>
+          <textarea v-model="product.description" placeholder="Description du produit" class="border rounded w-full p-2" required></textarea>
         </div>
-        <div class="flex flex-wrap">
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Catégorie</label>
-            <select
-              v-model="localProduct.category_id"
-              class="form-select"
-            >
-              <option value="">Sélectionner une catégorie</option>
-              <option v-for="category in localCategories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
-            <button @click="addCategory" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-2">
-              Ajouter une catégorie
-            </button>
-            <button @click="deleteCategory" class="bg-red-700 text-white px-4 py-2 rounded mt-2">
-              Supprimer la catégorie
-            </button>
-          </div>
+        <div>
+          <label class="font-bold text-blueGray-700">Prix du produit:</label>
+          <input type="number" v-model="product.price" placeholder="Prix du produit" class="border rounded w-full p-2" required />
         </div>
-        <div class="flex flex-wrap">
-          <div class="w-full lg:w-6/12 px-4">
-            <label class="text-blueGray-700 font-bold mb-2">Image</label>
-            <input
-              type="file"
-              @change="handleFileUpload"
-              class="form-input"
-            />
-          </div>
+        <div>
+          <label class="font-bold text-blueGray-700">Quantité en stock:</label>
+          <input type="number" v-model="product.stock" placeholder="Quantité en stock" class="border rounded w-full p-2" required />
         </div>
-        <button type="submit" class="bg-blueGray-700 text-white px-4 py-2 rounded mt-4">
-          {{ localProduct.id ? 'Modifier' : 'Ajouter' }}
+        <div>
+          <label class="font-bold text-blueGray-700">Catégorie:</label>
+          <select v-model="product.category_id" class="border rounded w-full p-2">
+            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-bold text-blueGray-700">Image:</label>
+          <input type="file" @change="handleImageUpload" class="border rounded w-full p-2" />
+          <p v-if="imageName" class="text-blueGray-600 mt-2">Fichier sélectionné: {{ imageName }}</p>
+        </div>
+        <button type="submit" class="bg-blueGray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150">
+          Mettre à Jour
         </button>
+        <router-link to="/admin/products" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+          Retour
+        </router-link>
       </form>
     </div>
   </div>
@@ -89,139 +49,70 @@
 import axios from 'axios';
 
 export default {
-  props: {
-    product: {
-      type: Object,
-      default: () => ({}),
-    },
-    categories: {
-      type: Array,
-      default: () => [],
-    },
-  },
   data() {
     return {
-      localProduct: { ...this.product },
-      localCategories: [], // Utiliser une propriété locale pour les catégories
-      selectedFile: null,
+      product: {
+        product_name: '',
+        description: '',
+        price: 0,
+        stock: 0,
+        category_id: null,
+        image: null,
+      },
+      categories: [],
+      imageName: '',
     };
   },
-  watch: {
-    product: {
-      handler(newValue) {
-        this.localProduct = { ...newValue };
-      },
-      deep: true,
-    },
-    categories: {
-      handler(newValue) {
-        this.localCategories = [...newValue];
-      },
-      immediate: true,
-    },
-  },
-  async mounted() {
-    this.fetchCategories(); // Assurez-vous de récupérer les catégories lors du montage
-  },
   methods: {
+    async fetchProduct() {
+      try {
+        const response = await axios.get(`/api/products/${this.$route.params.id}`);
+        this.product = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération du produit:", error);
+      }
+    },
     async fetchCategories() {
       try {
         const response = await axios.get('/api/categories');
-        this.localCategories = response.data;
-        console.log('Categories:', this.localCategories); // Assurez-vous que les catégories sont récupérées
+        this.categories = response.data;
       } catch (error) {
         console.error("Erreur lors de la récupération des catégories:", error);
       }
     },
-    async addCategory() {
-    // Open a prompt to enter the new category name
-    const categoryName = prompt('Enter the new category name:');
-    if (categoryName) {
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.product.image = file;
+        this.imageName = file.name;
+      }
+    },
+    async updateProduct() {
+      const formData = new FormData();
+      formData.append('product_name', this.product.product_name);
+      formData.append('description', this.product.description);
+      formData.append('price', this.product.price);
+      formData.append('quantity', this.product.stock); // Changez 'stock' à 'quantity'
+      formData.append('category_id', this.product.category_id);
+      if (this.product.image) {
+        formData.append('image', this.product.image);
+      }
+
       try {
-        const response = await axios.post('/api/categories', { name: categoryName });
-        this.localCategories.push(response.data);
-        console.log('Category created successfully:', response.data);
+        await axios.put(`/api/products/${this.product.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.$router.push({ name: 'ProductManagement' });
       } catch (error) {
-        console.error('Error creating category:', error);
+        console.error("Erreur lors de la mise à jour du produit:", error);
       }
-    }
+    },
   },
-  async deleteCategory() {
-    if (this.localProduct.category_id) {
-      const categoryName = this.localCategories.find(category => category.id === this.localProduct.category_id).name;
-      const confirmDelete = confirm(`Voulez-vous vraiment supprimer la catégorie "${categoryName}" ?`);
-      if (confirmDelete) {
-        try {
-          const response = await axios.delete(`/api/categories/${this.localProduct.category_id}`);
-          this.localCategories = this.localCategories.filter(category => category.id !== this.localProduct.category_id);
-          console.log('Category deleted successfully:', response.data);
-        } catch (error) {
-          console.error('Error deleting category:', error);
-        }
-      }
-    }
-  },
-    handleFileUpload(event) {
-  this.selectedFile = event.target.files[0];
-},
-    async submitForm() {
-  try {
-    // Vérifiez les champs requis
-    if (!this.localProduct.product_name) {
-      throw new Error("Le nom du produit est requis");
-    }
-    if (!this.localProduct.price || isNaN(this.localProduct.price)) {
-      throw new Error("Le prix doit être un nombre");
-    }
-    if (this.localProduct.quantity < 0) {
-      throw new Error("La quantité doit être un entier positif");
-    }
-
-    const formData = new FormData();
-    formData.append('product_name', this.localProduct.product_name);
-    formData.append('description', this.localProduct.description || '');
-    formData.append('price', this.localProduct.price);
-    formData.append('quantity', this.localProduct.quantity);
-    formData.append('category_id', this.localProduct.category_id || null);
-    if (this.selectedFile) {
-  formData.append('image', this.selectedFile);
-}
-console.log('FormData:', [...formData.entries()]);
-
-    const url = this.localProduct.id 
-      ? `/api/products/${this.localProduct.id}` 
-      : '/api/products';
-    const method = this.localProduct.id ? 'put' : 'post';
-
-    const response = await axios({ method, url, data: formData });
-    console.log('Produit enregistré avec succès:', response.data);
-    this.$emit('save');
-  } catch (error) {
-    console.error("Erreur lors de l'enregistrement du produit:", error.message);
-    console.error("Réponse de l'API:", error.response?.data);
-  }
-},
+  mounted() {
+    this.fetchProduct();
+    this.fetchCategories();
   },
 };
 </script>
-
-<style scoped>
-.form-input {
-  border: 1px solid #d3d3d3;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-}
-
-.form-textarea {
-  border: 1px solid #d3d3d3;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  resize: vertical;
-}
-
-.form-select {
-  border: 1px solid #d3d3d3;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-}
-</style>

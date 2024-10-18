@@ -31,7 +31,7 @@
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
-              statSubtitle="NOMBRE DE VOTES"
+              statSubtitle="NOMBRE USERS"
               :statTitle="votes"
               statArrow="down"
               statPercent="1.10"
@@ -43,7 +43,7 @@
           </div>
           <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
             <card-stats
-              statSubtitle="NOMBRE DE SONDAGES"
+              statSubtitle="NOMBRE DE VENTES"
               :statTitle="sondages"
               statArrow="up"
               statPercent="12"

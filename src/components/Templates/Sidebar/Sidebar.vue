@@ -166,10 +166,29 @@
                 ]"
               >
                 <i class="fas fa-box mr-2 text-sm" :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"></i>
-                Gestion des Produits
+                Produits
               </a>
             </router-link>
           </li>
+          <li class="items-center" v-if="userHasPermission('perm-products')">
+            <router-link 
+              to="/admin/driver" 
+              v-slot="{ href, navigate, isActive }"
+            >
+              <a 
+                :href="href"
+                @click="navigate"
+                class="text-xs uppercase py-3 font-bold block"
+                :class="[
+                  isActive ? 'text-emerald-500 hover:text-emerald-600' : 'text-blueGray-700 hover:text-blueGray-500',
+                ]"
+              >
+                <i class="fas fa-box mr-2 text-sm" :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"></i>
+                Livreurs
+              </a>
+            </router-link>
+          </li>
+
 
 
 
