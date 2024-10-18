@@ -26,6 +26,7 @@ import Tables from "@/views/admin/Tables.vue";
 import ProductManagement from '@/components/Templates/ProductManagement.vue';
 import DriverList from '@/components/Templates/DriverList.vue';
 import DriverModal from '@/components/Templates/DriverModal.vue';
+import DriverLocationManagement from '@/components/Templates/DriverLocationManagement.vue';
 
 
 import ProductModal from '@/components/Templates/ProductModal.vue';
@@ -49,6 +50,7 @@ import Analyse_Demographique from "@/views/admin/utilisateurs/Analyse_Demographi
 import Roles from '@/views/admin/Roles.vue';
 import Permissions from '@/views/admin/Permissions.vue';
 import CardPermissionModif from '@/components/Templates/Cards/CardPermissionModif.vue';
+
 
 // views for Auth layout
 
@@ -147,6 +149,12 @@ const routes = [
         component: DriverModal,
         meta: { permission: 'perm-driver' },
 
+      },
+      {
+        path: '/driver-locations',
+        name: 'DriverLocationManagement',
+        component: DriverLocationManagement,
+        meta: { permission: 'perm-driver' },
       },
       {
         path: '/admin/products/add',

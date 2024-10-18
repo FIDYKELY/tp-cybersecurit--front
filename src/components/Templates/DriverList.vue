@@ -3,6 +3,7 @@
     <div class="rounded-t bg-white text-blueGray-700 mb-0 px-6 py-6">
       <div class="text-center flex justify-between items-center">
         <h6 class="text-xl font-bold text-blueGray-700">Gestion des Conducteurs</h6>
+        <button @click="goToDriverLocations" class="bg-blueGray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow-md hover:shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105">Gérer les Localisations des Conducteurs</button>
         <button 
           @click="navigateToAddDriver"
           class="bg-blueGray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow-md hover:shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
@@ -56,6 +57,9 @@ export default {
     };
   },
   methods: {
+    goToDriverLocations() {
+      this.$router.push({ name: 'DriverLocationManagement' });
+    },
     async fetchDrivers() {
       try {
         const response = await axios.get('http://localhost:8000/api/drivers/all');
