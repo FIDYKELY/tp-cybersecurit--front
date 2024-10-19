@@ -27,6 +27,9 @@ import ProductManagement from '@/components/Templates/ProductManagement.vue';
 import DriverList from '@/components/Templates/DriverList.vue';
 import DriverModal from '@/components/Templates/DriverModal.vue';
 import DriverLocationManagement from '@/components/Templates/DriverLocationManagement.vue';
+import OrderManagement from '@/components/Templates/OrderManagement.vue';
+import DeliveryManagement from '@/components/Templates/DeliveryManagement.vue';
+
 
 
 import ProductModal from '@/components/Templates/ProductModal.vue';
@@ -95,15 +98,15 @@ const routes = [
         component: Settings,
       },
       {
-        path: '/admin/user/:id', // Spécifiez le paramètre id dans le chemin
-        name: 'modifUser', // Nommez la route
+        path: '/admin/user/:id', 
+        name: 'modifUser', 
         component: ModifUser,
         meta: { permission: 'perm-rolePermission' },
         props: true
       },
       {
-        path: '/admin/publication', // Spécifiez le paramètre id dans le chemin
-        name: 'pubs', // Nommez la route
+        path: '/admin/publication', 
+        name: 'pubs', 
         component: Pubs,
         meta: { permission: 'perm-publicationListe' },
         props: true
@@ -151,10 +154,22 @@ const routes = [
 
       },
       {
-        path: '/driver-locations',
+        path: '/admin/driver-locations',
         name: 'DriverLocationManagement',
         component: DriverLocationManagement,
         meta: { permission: 'perm-driver' },
+      },
+      {
+        path: '/admin/order',
+        name: 'OrderManagement',
+        component: OrderManagement,
+        meta: { permission: 'perm-order' },
+      },
+      {
+        path: '/admin/delivery',
+        name: 'DeliveryManagement',
+        component: DeliveryManagement,
+        meta: { permission: 'perm-delivery' },
       },
       {
         path: '/admin/products/add',
