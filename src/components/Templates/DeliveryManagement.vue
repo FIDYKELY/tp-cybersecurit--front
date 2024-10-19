@@ -44,6 +44,12 @@
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet-routing-machine'; 
+import markerIcon from '@/assets/img/marker.svg';
+import markerShadow from '@/assets/img/marker-shadow.svg';
+import 'leaflet-control-geocoder';
+
+
 
 export default {
   data() {
@@ -52,6 +58,7 @@ export default {
       clientLocation: null,
       driverLocation: null,
       map: null,
+      routingControl: null, 
     };
   },
   methods: {
@@ -91,6 +98,11 @@ export default {
       if (!this.map) {
         this.map = L.map('map').setView([this.clientLocation.latitude, this.clientLocation.longitude], 13);
 
+        L.Icon.Default.mergeOptions({
+            iconUrl: markerIcon,
+            shadowUrl: markerShadow,
+        });
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '© OpenStreetMap'
@@ -112,13 +124,33 @@ export default {
         [this.driverLocation.latitude, this.driverLocation.longitude]
       ]);
       this.map.fitBounds(bounds);
-    }
+
+      // Ajoutez le routage entre le client et le livreur
+      this.addRouting();
+    },
+    addRouting() {
+  // Supprimez le routage précédent s'il existe
+  if (this.routingControl) {
+    this.map.removeControl(this.routingControl);
+  }
+
+  this.routingControl = L.Routing.control({
+    waypoints: [
+      L.latLng(this.clientLocation.latitude, this.clientLocation.longitude),
+      L.latLng(this.driverLocation.latitude, this.driverLocation.longitude),
+    ],
+    routeWhileDragging: true,
+    geocoder: L.Control.Geocoder.nominatim(), // Cela doit fonctionner après l'importation correcte
+  }).addTo(this.map);
+}
+
   },
   mounted() {
     this.fetchDeliveries();
   }
 };
 </script>
+
 
   
   <style scoped>
